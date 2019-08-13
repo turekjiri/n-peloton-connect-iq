@@ -66,7 +66,7 @@ $(DEPLOY)/$(APPNAME)-widget.prg: bin/$(APPNAME)-widget-$(DEVICE).prg
 deploy: build $(DEPLOY)/$(APPNAME).prg $(DEPLOY)/$(APPNAME)-widget.prg
 
 manifest-widget.xml: manifest-app.xml
-	sed -e 's/watch-app/widget/g;s/9B0A09CFC89E4F7CA5E4AB21400EE424/B5FD4C5FE0F848E88A03E37E86971CEB/g' < manifest-app.xml > manifest-widget.xml
+	sed -e 's/watch-app/widget/g;s/7015840583404C54B2DD04AFF03E0875/1C2EC6E5017C4E81B3AA7A6CC854E834/g' < manifest-app.xml > manifest-widget.xml
 
 package: package-app package-widget
 

@@ -5,12 +5,11 @@ using Toybox.PersistedContent as PC;
 using Toybox.Timer as Timer;
 using Toybox.System as System;
 
-class gimporterApp extends App.AppBase {
+class npelotonApp extends App.AppBase {
     var tracks;
     var trackToStart;
     var canLoadList;
     var status;
-    var mGPXorFIT;
     var bluetoothTimer;
     var mIntent;
     var exitTimer;
@@ -20,8 +19,6 @@ class gimporterApp extends App.AppBase {
         tracks = null;
         canLoadList = true;
         status = "";
-        mGPXorFIT = Ui.loadResource(Rez.Strings.GPXorFIT);
-        System.println("GPXorFit = " + mGPXorFIT);
         bluetoothTimer = new Timer.Timer();
         exitTimer = new Timer.Timer();
         mIntent = null;
@@ -39,7 +36,7 @@ class gimporterApp extends App.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new gimporterView(), new gimporterDelegate() ];
+        return [ new npelotonView(), new npelotonDelegate() ];
     }
 
     function getStatus() {
@@ -84,7 +81,7 @@ class gimporterApp extends App.AppBase {
         status = Rez.Strings.GettingTracklist;
         canLoadList = false;
         try {
-            Comm.makeWebRequest("http://localhost:22222/dir.json", { "type" => mGPXorFIT, "short" => "1", "longname" => "1" },
+            Comm.makeWebRequest("https://n-peloton.fr/gpx/list.php", {  },
                                 {
                                     :method => Comm.HTTP_REQUEST_METHOD_GET,
                                         :headers => {
@@ -162,25 +159,15 @@ class gimporterApp extends App.AppBase {
         var trackurl = tracks[index]["url"];
         trackToStart = tracks[index]["title"];
 
-        if ((trackurl.length() < 7) || (!trackurl.substring(0, 7).equals("http://"))) {
-            trackurl = "http://localhost:22222/" + trackurl;
-        }
-
         status = Rez.Strings.Downloading;
         canLoadList = false;
-        System.println("GPXorFIT: " + mGPXorFIT);
 
-        Ui.pushView(new gimporterView(), new gimporterDelegate(), Ui.SLIDE_IMMEDIATE);
+        Ui.pushView(new npelotonView(), new npelotonDelegate(), Ui.SLIDE_IMMEDIATE);
         Ui.requestUpdate();
 
         try {
-            if (mGPXorFIT.equals("FIT")) {
-                System.println("Downloading FIT");
-                Comm.makeWebRequest(trackurl, { "type" => "FIT", "longname" => "1" }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_FIT}, method(:onReceiveTrack) );
-            } else {
-                System.println("Downloading GPX");
-                Comm.makeWebRequest(trackurl, { "type" => "GPX", "longname" => "1" }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_GPX}, method(:onReceiveTrack) );
-            }
+            System.println("Downloading GPX");
+            Comm.makeWebRequest(trackurl, { }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_GPX}, method(:onReceiveTrack) );
         } catch( ex ) {
             status = Rez.Strings.DownloadNotSupported;
         }
@@ -227,7 +214,7 @@ class gimporterApp extends App.AppBase {
 
             // FIXME: Garmin
             // Without switchToView() the widget is gone
-            Ui.switchToView(new gimporterView(), new gimporterDelegate(), Ui.SLIDE_IMMEDIATE);
+            Ui.switchToView(new npelotonView(), new npelotonDelegate(), Ui.SLIDE_IMMEDIATE);
 
             status = Rez.Strings.DownloadComplete;
 
@@ -336,7 +323,7 @@ class gimporterApp extends App.AppBase {
 
 
 
-class gimporterView extends Ui.View {
+class npelotonView extends Ui.View {
     var st;
     var ps;
     var app;
@@ -364,7 +351,7 @@ class gimporterView extends Ui.View {
     }
 }
 
-class gimporterDelegate extends Ui.BehaviorDelegate {
+class npelotonDelegate extends Ui.BehaviorDelegate {
     var app;
 
     function initialize() {
