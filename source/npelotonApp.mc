@@ -166,9 +166,13 @@ class npelotonApp extends App.AppBase {
         Ui.requestUpdate();
 
         try {
-            System.println("Downloading GPX");
-            Comm.makeWebRequest(trackurl, { }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_GPX}, method(:onReceiveTrack) );
+            System.println("Downloading FIT from " + trackurl);
+            Comm.makeWebRequest(trackurl, { }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_FIT}, method(:onReceiveTrack) );
         } catch( ex ) {
+    		System.println("ERROR!");
+            System.println(ex.getErrorMessage());
+            ex.printStackTrace();
+    		System.println("ERROR!");
             status = Rez.Strings.DownloadNotSupported;
         }
     }
