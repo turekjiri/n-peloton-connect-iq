@@ -1,0 +1,1 @@
+"C:\Program Files\AdoptOpenJDK\jdk-11.0.4.11-hotspot\bin\java" -Dfile.encoding=UTF-8 -Dapple.awt.UIElement=true -jar C:\code\workspaces\connect-iq\connectiq-sdk-win-3.0.12-2019-06-12-77ed6f47e\bin\monkeybrains.jar -o bin\npeloton-widget.iq -e -w -y C:\code\workspaces\connect-iq\developer_key -f "monkey-base.jungle;monkey-widget.jungle"
