@@ -1,7 +1,7 @@
 # N-Peloton
 Garmin Connect App to import GPX for N-Peloton
 
-* ConnectIQ Widget : https://apps.garmin.com/fr-FR/apps/a1efb62e-f8bf-4487-a20a-660ad91c9440
+  * ConnectIQ app : https://apps.garmin.com/fr-FR/apps/7743f8a1-cb5f-478d-a9a7-4ea48b915cd8
 
 
 ## HOWTO
