@@ -10,7 +10,6 @@ class gimporterApp extends App.AppBase {
     var trackToStart;
     var canLoadList;
     var status;
-    var mGPXorFIT;
     var bluetoothTimer;
     var mIntent;
     var exitTimer;
@@ -20,8 +19,6 @@ class gimporterApp extends App.AppBase {
         tracks = null;
         canLoadList = true;
         status = "";
-        mGPXorFIT = Ui.loadResource(Rez.Strings.GPXorFIT);
-        System.println("GPXorFit = " + mGPXorFIT);
         bluetoothTimer = new Timer.Timer();
         exitTimer = new Timer.Timer();
         mIntent = null;
@@ -84,12 +81,9 @@ class gimporterApp extends App.AppBase {
         status = Rez.Strings.GettingTracklist;
         canLoadList = false;
         try {
-            Comm.makeWebRequest("http://127.0.0.1:22222/dir.json", { "type" => mGPXorFIT, "short" => "1", "longname" => "1" },
+            Comm.makeWebRequest("https://n-peloton.fr/gpx/list.php", {  },
                                 {
                                     :method => Comm.HTTP_REQUEST_METHOD_GET,
-                                        :headers => {
-                                        "Content-Type" => Comm.REQUEST_CONTENT_TYPE_JSON
-                                    },
                                         :responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON
                                              }, method(:onReceiveTracks)
                 );
@@ -105,13 +99,6 @@ class gimporterApp extends App.AppBase {
     function onReceiveTracks(responseCode, data) {
         status = "";
         canLoadList = true;
-
-        if (responseCode == Comm.BLE_CONNECTION_UNAVAILABLE) {
-            System.println("Bluetooth disconnected");
-            status = Rez.Strings.BluetoothDisconnected;
-            Ui.requestUpdate();
-            return;
-        }
 
         if (responseCode != 200) {
             System.println("data == null\nCode " + responseCode.toString() + "\n");
@@ -162,25 +149,15 @@ class gimporterApp extends App.AppBase {
         var trackurl = tracks[index]["url"];
         trackToStart = tracks[index]["title"];
 
-        if ((trackurl.length() < 7) || (!trackurl.substring(0, 7).equals("http://"))) {
-            trackurl = "http://127.0.0.1:22222/" + trackurl;
-        }
-
         status = Rez.Strings.Downloading;
         canLoadList = false;
-        System.println("GPXorFIT: " + mGPXorFIT);
 
         Ui.pushView(new gimporterView(), new gimporterDelegate(), Ui.SLIDE_IMMEDIATE);
         Ui.requestUpdate();
 
         try {
-            if (mGPXorFIT.equals("FIT")) {
-                System.println("Downloading FIT");
-                Comm.makeWebRequest(trackurl, { "type" => "FIT", "longname" => "1" }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_FIT}, method(:onReceiveTrack) );
-            } else {
-                System.println("Downloading GPX");
-                Comm.makeWebRequest(trackurl, { "type" => "GPX", "longname" => "1" }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_GPX}, method(:onReceiveTrack) );
-            }
+            System.println("Downloading FIT");
+            Comm.makeWebRequest(trackurl, {  }, {:method => Comm.HTTP_REQUEST_METHOD_GET,:responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_FIT}, method(:onReceiveTrack) );
         } catch( ex ) {
             status = Rez.Strings.DownloadNotSupported;
         }
@@ -203,13 +180,7 @@ class gimporterApp extends App.AppBase {
     function onReceiveTrack(responseCode, downloads) {
         System.println("onReceiveTrack");
 
-        if (responseCode == Comm.BLE_CONNECTION_UNAVAILABLE) {
-            System.println("Bluetooth disconnected");
-            status = Rez.Strings.BluetoothDisconnected;
-            Ui.requestUpdate();
-            return;
-        }
-        else if (responseCode != 200) {
+        if (responseCode != 200) {
             System.println("Code: " + responseCode);
             status = Rez.Strings.DownloadFailed;
             Ui.requestUpdate();
