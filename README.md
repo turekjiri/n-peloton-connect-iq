@@ -1,8 +1,15 @@
+### Mercre'ride's COPY of N-Peloton Garmin APP 
+
 # gimporter
 Garmin Connect App to import GPX and FIT files
 
+N-Peloton
 * ConnectIQ App: https://apps.garmin.com/en-US/apps/de11adc4-fdbb-40b5-86ac-7f93b47ea5bb
 * Android App: https://play.google.com/store/apps/details?id=org.surfsite.gexporter
+
+Mercre'ride :
+* ConnectIQ App: comming soon
+* Android App: comming soon
 
 
 ## HOWTO
